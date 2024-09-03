@@ -16,16 +16,15 @@ contract DeployFundMe is Script {
         HelperConfig helperConfig = new HelperConfig();
         address ethUsdPriceFeed = helperConfig.activeNetworkConfig();
 
-
         vm.startBroadcast();
         // just a test address, not a real PriceFeed
         // new FundMe(0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38);
-        
+
         // the address is sepolia deployment of the AggregatorV3 contract from the video
         // fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
 
         // use ethUsdPriceFeed
         fundMe = new FundMe(ethUsdPriceFeed);
-        vm.stopBroadcast();   
+        vm.stopBroadcast();
     }
 }

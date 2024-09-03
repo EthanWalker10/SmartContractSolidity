@@ -8,7 +8,6 @@ import {MockV3Aggregator} from "../mock/MockV3Aggregator.sol";
 import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
 
 contract FundMeTest is Test {
-
     FundMe fundMe;
     DeployFundMe deployFundMe;
 
@@ -26,10 +25,9 @@ contract FundMeTest is Test {
         fundMe.fund{value: SEND_VALUE}();
         assert(address(fundMe).balance > 0);
         _;
-
     }
 
-    function setUp() external { 
+    function setUp() external {
         // use mock directly
         // MockV3Aggregator mockPriceFeed = new MockV3Aggregator(1, 100);
         // fundMe = new FundMe(address(mockPriceFeed));
@@ -37,18 +35,16 @@ contract FundMeTest is Test {
         // use the Sepolia address of PriceFeed contract directly
         // fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
 
-
         // use script to deploy
         deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
 
         // cheatcode
-        vm.deal(alice, STARTING_BALANCE);   // give alice some money
+        vm.deal(alice, STARTING_BALANCE); // give alice some money
     }
 
     function testMinimumDollarIsFive() public {
         assertEq(fundMe.MINIMUM_USD(), 5e18);
-
     }
 
     function testOwnerIsMsgSender() public {
@@ -67,7 +63,6 @@ contract FundMeTest is Test {
     function testFundFailsWIthoutEnoughETH() public {
         vm.expectRevert(); // <- The next line after this one should revert! If not test fails.
         fundMe.fund(); // <- We send 0 value
-
     }
 
     // function testFundUpdatesFundDataStrucutre() public {
@@ -82,7 +77,6 @@ contract FundMeTest is Test {
         fundMe.fund{value: SEND_VALUE}();
         uint256 amountFunded = fundMe.getAddressToAmountFunded(alice);
         assertEq(amountFunded, SEND_VALUE);
-
     }
 
     function testAddsFunderToArrayOfFunders() public {
@@ -92,7 +86,6 @@ contract FundMeTest is Test {
 
         address funder = fundMe.getFunder(0);
         assertEq(funder, alice);
-
     }
 
     // without modifier funded
@@ -110,7 +103,6 @@ contract FundMeTest is Test {
     function testOnlyOwnerCanWithdraw() public funded {
         vm.expectRevert();
         fundMe.withdraw();
-
     }
 
     // function testWithdrawFromASingleFunder() public funded {
@@ -120,7 +112,6 @@ contract FundMeTest is Test {
     //     // check the initial balance
     //     console.log(startingFundMeBalance);
     //     console.log(startingOwnerBalance);
-
 
     //     vm.startPrank(fundMe.getOwner());
     //     fundMe.withdraw();
@@ -160,11 +151,7 @@ contract FundMeTest is Test {
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         assertEq(endingFundMeBalance, 0);
         // why is it still true?
-        assertEq(
-            startingFundMeBalance + startingOwnerBalance,
-            endingOwnerBalance
-        );
-
+        assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
 
     function testWithdrawFromMultipleFunders() public funded {
@@ -187,7 +174,6 @@ contract FundMeTest is Test {
         assert(address(fundMe).balance == 0);
         assert(startingFundMeBalance + startingOwnerBalance == fundMe.getOwner().balance);
         assert((numberOfFunders + 1) * SEND_VALUE == fundMe.getOwner().balance - startingOwnerBalance);
-
     }
 
     function testWithdrawFromMultipleFundersCheaper() public funded {
@@ -210,7 +196,6 @@ contract FundMeTest is Test {
         assert(address(fundMe).balance == 0);
         assert(startingFundMeBalance + startingOwnerBalance == fundMe.getOwner().balance);
         assert((numberOfFunders + 1) * SEND_VALUE == fundMe.getOwner().balance - startingOwnerBalance);
-
     }
 
     function testPrintStorageData() public {
@@ -220,12 +205,9 @@ contract FundMeTest is Test {
             console.logBytes32(value);
         }
         console.log("PriceFeed address:", address(fundMe.getPriceFeed()));
-
     }
-
 
     // function testFloat() public {
     //     console.log(SEND_VALUE);
     // }
-
 }

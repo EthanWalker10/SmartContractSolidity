@@ -7,7 +7,7 @@ import {MockV3Aggregator} from "../test/mock/MockV3Aggregator.sol";
 
 // we can access `vm.startBroadcast` and `vm.stopBroadcast` from the forge-std/Script.sol
 // we use it to deploy our mocks
-contract HelperConfig is Script{
+contract HelperConfig is Script {
     // If we are on a local Anvil, we deploy the mocks
     // Else, grab the existing address from the live network
 
@@ -23,25 +23,21 @@ contract HelperConfig is Script{
         address priceFeed; // ETH/USD price feed address
     }
 
-    constructor(){
+    constructor() {
         // block is just like msg, which is inborn. I guess.
         if (block.chainid == 11155111) {
             activeNetworkConfig = getSepoliaEthConfig();
         } else {
             activeNetworkConfig = getOrCreateAnvilEthConfig();
         }
-
     }
 
-    function getSepoliaEthConfig() public pure returns (NetworkConfig memory){
-        NetworkConfig memory sepoliaConfig = NetworkConfig({
-            priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306
-        });
+    function getSepoliaEthConfig() public pure returns (NetworkConfig memory) {
+        NetworkConfig memory sepoliaConfig = NetworkConfig({priceFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306});
         return sepoliaConfig;
     }
 
-    function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory){
-
+    function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
         // to check if we already deployed the `mockPriceFeed` before deploying it once more.
         if (activeNetworkConfig.priceFeed != address(0)) {
             return activeNetworkConfig;
@@ -53,11 +49,8 @@ contract HelperConfig is Script{
         mockPriceFeed = new MockV3Aggregator(DECIMALS, INITIAL_PRICE);
         vm.stopBroadcast();
 
-        NetworkConfig memory anvilConfig = NetworkConfig({
-            priceFeed: address(mockPriceFeed)
-        });
+        NetworkConfig memory anvilConfig = NetworkConfig({priceFeed: address(mockPriceFeed)});
 
         return anvilConfig;
-
     }
 }
